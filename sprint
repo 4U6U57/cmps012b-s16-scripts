@@ -9,9 +9,75 @@ ASGBIN="$CLASSDIR/bin/$ASG"
 ASGDIR="$CLASSDIR/$ASG"
 SEPARATE="=================================================="
 
+# Read arguments
+FUNC=""
+FUNCALL="deduct compile mail clean help"
+FUNCDEFAULT="deduct compile export"
+if [[ $@ == "" ]]; then
+  FUNC="$FUNCDEFAULT"
+else
+  for ARG in $@; do
+    if echo "$FUNCALL" | grep -Pq "$ARG"; then
+      FUNC+=$ARG
+      FUNC+=" "
+    else
+      echo "ERROR: $ARG is not a valid sprint argument"
+    fi
+  done
+fi
+
+# Print welcome message
 echo; echo; echo; echo; echo
 echo $SEPARATE
-echo "SPRINT - Faster than running"
+echo "SPRINT - faster than running"
 echo "CLASS  = $CLASS"
 echo "ASG    = $ASG"
+echo "MODE   = $FUNC"
 echo $SEPARATE
+
+# Declare all functions
+
+forall() {
+  CLASSNUM=$(echo $CLASS | cut -d '0' -f 2 | cut -d '-' -f 1)
+  cd $ASGDIR
+  for STUDENT in $(ls -d */); do
+    STUDENTDIR=$ASGDIR/$STUDENT
+    STUDENT=$(basename $STUDENT /)
+    cd $STUDENTDIR
+    echo "$SEPARATE"
+    pwd
+    $@
+  done
+}
+
+deduct() {
+  echo
+}
+
+compile() {
+  echo
+}
+
+export() {
+  echo
+}
+
+mail() {
+  echo
+}
+
+clean() {
+  echo
+}
+
+help() {
+  echo "SPRINT - faster than running"
+  echo "USAGE: sprint [commands]"
+  echo "Default (no commands): $FUNCDEFAULT"
+  echo "All commands: $FUNCALL"
+}
+
+for ARG in $FUNC; do
+  echo "MODE $ARG"
+  $ARG
+done
