@@ -8,6 +8,8 @@ lab% : lab%.c
 	gcc -o $@ $@.o -lm
 	make clean
 	mv $@ ${BINPATH}/$@
+	cp forall ${BINPATH}/$@
+	ls ${BINPATH}/$@
 
 clean :	
 	rm -f *.o
