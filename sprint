@@ -1,0 +1,17 @@
+#!/bin/bash
+# sprint - Grading utility, faster than running
+
+PWD="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CLASSDIR="$(echo $PWD | cut -d '/' -f 1-5)"
+CLASS="$(basename $CLASSDIR)"
+ASG="$(basename $PWD)"
+ASGBIN="$CLASSDIR/bin/$ASG"
+ASGDIR="$CLASSDIR/$ASG"
+SEPARATE="=================================================="
+
+echo; echo; echo; echo; echo
+echo $SEPARATE
+echo "SPRINT - Faster than running"
+echo "CLASS  = $CLASS"
+echo "ASG    = $ASG"
+echo $SEPARATE
