@@ -1,12 +1,19 @@
 BINPATH = ..
 
-select:
+select :
 	echo Please select a valid make target
 
-lab2:
+lab% : lab%.c
 	gcc -c -Wall -Werror --std=c99 $@.c
 	gcc -o $@ $@.o -lm
-	rm -f $@.o
+	make clean
 	mv $@ ${BINPATH}/$@
 
+clean :	
+	rm -f *.o
+	
+submit : clean push
 
+.PHONY : select lab* clean submit
+
+include git.mk
