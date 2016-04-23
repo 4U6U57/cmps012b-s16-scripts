@@ -11,7 +11,7 @@ SEPARATE="=================================================="
 
 # Read arguments
 FUNC=""
-FUNCALL="deduct compile mail clean help"
+FUNCALL="deduct compile mail export clean help"
 FUNCDEFAULT="deduct compile export"
 if [[ $@ == "" ]]; then
   FUNC="$FUNCDEFAULT"
