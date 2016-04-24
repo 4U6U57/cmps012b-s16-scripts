@@ -56,9 +56,9 @@ void testProg(char *str) {
 	system(temps);
 	sprintf(temps, "cp %s .", testoutput);
 	system(temps);
-	sprintf(temps, "javac -Xlint %s.java", str);
+	sprintf(temps, "timeout 10s javac -Xlint %s.java", str);
 	system(temps);
-	sprintf(temps, "java %s testin out", str);
+	sprintf(temps, "timeout 10s java %s testin out", str);
 	system(temps);
 	printf("\r\n=====\r\nin:\r\n");
 	sprintf(temps, "cat testin");
@@ -173,10 +173,10 @@ int main (int argc, char **argv) {
 		}
 	}
 	fp = fopen(perffile, "w");
-	fprintf(fp, "%d / %d | %s\r\n", gradep, perfmax, gradep == 5 ? "Nice Job" : "Please see Performance Notes");
+	fprintf(fp, "%d / %d | Performance: %s\r\n", gradep, perfmax, gradep == 5 ? "Nice Job" : "Please see Performance Notes");
 	fclose(fp);
 	fp = fopen(desfile, "w");
-	fprintf(fp, "%d / %d | %s\r\n", graded, desmax, graded == 5 ? "Nice Job" : "Please see Design Notes");
+	fprintf(fp, "%d / %d | Design: %s\r\n", graded, desmax, graded == 5 ? "Nice Job" : "Please see Design Notes");
 	fclose(fp);
 	fp = fopen(notes, "a");
 	fprintf(fp, "\r\n====================\r\n");
