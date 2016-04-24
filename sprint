@@ -37,6 +37,10 @@ echo $SEPARATE
 
 # Declare all functions
 
+verbose() {
+  VERBOSE=true
+}
+
 forall() {
   CLASSNUM=$(echo $CLASS | cut -d '0' -f 2 | cut -d '-' -f 1)
   cd $ASGDIR
@@ -50,12 +54,55 @@ forall() {
   done
 }
 
+score() {
+  SCOREFILE=".score.s"
+  case "$@" in
+    init)
+      echo "0" > $SCOREFILE
+      ;;
+    get)
+      return $(cat $SCOREFILE)
+      ;;
+    [0-9]*)
+      echo $(($(score get) + ($@))) > $SCOREFILE
+  esac
+}
+
 deduct() {
   echo
 }
 
 compile() {
-  echo
+  DFILEPAT=".d.*.s"
+  DFILEBLANK=".d.blank.s"
+  GRADEFILE="grade.txt"
+  ASGSCORE=20
+  forall touch $DFILEBLANK
+  scoregen() {
+    score init
+    for DFILE in $DEFILEPAT; do
+      while read LINE; do
+        score $(echo $LINE | cut -d "/" -f 1)
+      done <$DFILE
+    done
+  }
+  forall scoregen
+  scorecap() {
+    if [[ $(score get) -gt $ASGSCORE || $(score get) -lt 0 ]]; then
+      SCORECAP=$(($ASGSCORE - $(score get)))
+      score $SCORECAP
+      echo "$SCORECAP / X | OVERRIDE: Score not within range 0-$ASGSCORE" > $DFILEBLANK
+    fi
+  }
+  forall scorecap
+  makeavg() {
+    CLASSCOUNT=0
+    SCORETOTAL=0
+    forall CLASSCOUNT = $((CLASSCOUNT + 1))
+    forall SCORETOTAL = $((SCORETOTAL + $(score get)))
+    CLASSAVG=$((SCORETOTAL / CLASSCOUNT))
+  }
+  forall rm -f $DFILEBLANK
 }
 
 export() {
