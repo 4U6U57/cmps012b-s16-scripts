@@ -48,8 +48,8 @@ forall() {
 		STUDENTDIR=$ASGDIR/$STUDENT
 		STUDENT=$(basename $STUDENT /)
 		cd $STUDENTDIR
-		echo "$SEPARATE"
-		pwd
+		#echo "$SEPARATE"
+		#pwd
 		$@
 	done
 }
@@ -69,19 +69,20 @@ score() {
 }
 
 deduct() {
-	DSHBLANK="dsh.blank.f"
+	DSHBLANK="dsh.blank.sh"
 	cd $ASGBIN
 	echo "#!/bin/bash" > $DSHBLANK
 	chmod +x $DSHBLANK
-	for DSH in dsh.*.f; do
+	for DSH in dsh.*.sh; do
 		echo $DSH
-		if [[ $DSH =~ "dsh.*.$USER.f" || $DSH =~ "dsh.*.all.f" ]]; then
+		if [[ $DSH == dsh.*.$USER.sh || $DSH == dsh.*.all.sh ]]; then
 			echo "EXECUTING $DSH"
 			forall $ASGBIN/$DSH
 		else
-			echo "$DSH"
+			echo "IGNORING $DSH"
 		fi
 	done
+	cd $ASGBIN
 	rm -f $DSHBLANK
 }
 
