@@ -151,9 +151,9 @@ int main (int argc, char **argv) {
 			printf("Finished adding performance comments to %s\r\n", cwd);
 		} else if (streq(temp, "-nd")) {
 			printf("Please enter the design comments followed by an EOF\r\n");
-			notesp[0] = '\0';
+			notesd[0] = '\0';
 			while(fgets(temp, 1023, stdin)) {
-				strcat(notesp, temp);
+				strcat(notesd, temp);
 			}
 			printf("Finished adding design comments to %s\r\n", cwd);
 		} else if (streq(temp, "-p")) {

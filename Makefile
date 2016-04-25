@@ -15,6 +15,7 @@ lab%.out : lab%.c
 	rm -f ${@:.out=.o}
 
 slab% : lab%
+	cp dsh.$<.*.f ${BINPATH}/$<
 	${BINPATH}/$</sprint
 
 clean :	

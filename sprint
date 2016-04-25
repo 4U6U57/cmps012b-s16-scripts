@@ -12,18 +12,18 @@ SEPARATE="=================================================="
 # Read arguments
 FUNC=""
 FUNCALL="deduct compile mail export clean help"
-FUNCDEFAULT="deduct compile export"
+FUNCDEFAULT="deduct export"
 if [[ $@ == "" ]]; then
-  FUNC="$FUNCDEFAULT"
+	FUNC="$FUNCDEFAULT"
 else
-  for ARG in $@; do
-    if echo "$FUNCALL" | grep -Pq "$ARG"; then
-      FUNC+=$ARG
-      FUNC+=" "
-    else
-      echo "ERROR: $ARG is not a valid sprint argument"
-    fi
-  done
+	for ARG in $@; do
+		if echo "$FUNCALL" | grep -Pq "$ARG"; then
+			FUNC+=$ARG
+			FUNC+=" "
+		else
+			echo "ERROR: $ARG is not a valid sprint argument"
+		fi
+	done
 fi
 
 # Print welcome message
@@ -38,93 +38,111 @@ echo $SEPARATE
 # Declare all functions
 
 verbose() {
-  VERBOSE=true
+	VERBOSE=true
 }
 
 forall() {
-  CLASSNUM=$(echo $CLASS | cut -d '0' -f 2 | cut -d '-' -f 1)
-  cd $ASGDIR
-  for STUDENT in $(ls -d */); do
-    STUDENTDIR=$ASGDIR/$STUDENT
-    STUDENT=$(basename $STUDENT /)
-    cd $STUDENTDIR
-    echo "$SEPARATE"
-    pwd
-    $@
-  done
+	CLASSNUM=$(echo $CLASS | cut -d '0' -f 2 | cut -d '-' -f 1)
+	cd $ASGDIR
+	for STUDENT in $(ls -d */); do
+		STUDENTDIR=$ASGDIR/$STUDENT
+		STUDENT=$(basename $STUDENT /)
+		cd $STUDENTDIR
+		echo "$SEPARATE"
+		pwd
+		$@
+	done
 }
 
 score() {
-  SCOREFILE=".score.s"
-  case "$@" in
-    init)
-      echo "0" > $SCOREFILE
-      ;;
-    get)
-      return $(cat $SCOREFILE)
-      ;;
-    [0-9]*)
-      echo $(($(score get) + ($@))) > $SCOREFILE
-  esac
+	SCOREFILE=".score.f"
+	case "$@" in
+		init)
+			echo "0" > $SCOREFILE
+			;;
+		get)
+			return $(cat $SCOREFILE)
+			;;
+		[0-9]*)
+			echo $(($(score get) + ($@))) > $SCOREFILE
+	esac
 }
 
 deduct() {
-  echo
+	DSHBLANK="dsh.blank.f"
+	cd $ASGBIN
+	echo "#!/bin/bash" > $DSHBLANK
+	chmod +x $DSHBLANK
+	for DSH in dsh.*.f; do
+		echo $DSH
+		if [[ $DSH =~ "dsh.*.$USER.f" || $DSH =~ "dsh.*.all.f" ]]; then
+			echo "EXECUTING $DSH"
+			forall $ASGBIN/$DSH
+		else
+			echo "$DSH"
+		fi
+	done
+	rm -f $DSHBLANK
 }
 
 compile() {
-  DFILEPAT=".d.*.s"
-  DFILEBLANK=".d.blank.s"
-  GRADEFILE="grade.txt"
-  ASGSCORE=20
-  forall touch $DFILEBLANK
-  scoregen() {
-    score init
-    for DFILE in $DEFILEPAT; do
-      while read LINE; do
-        score $(echo $LINE | cut -d "/" -f 1)
-      done <$DFILE
-    done
-  }
-  forall scoregen
-  scorecap() {
-    if [[ $(score get) -gt $ASGSCORE || $(score get) -lt 0 ]]; then
-      SCORECAP=$(($ASGSCORE - $(score get)))
-      score $SCORECAP
-      echo "$SCORECAP / X | OVERRIDE: Score not within range 0-$ASGSCORE" > $DFILEBLANK
-    fi
-  }
-  forall scorecap
-  makeavg() {
-    CLASSCOUNT=0
-    SCORETOTAL=0
-    forall CLASSCOUNT = $((CLASSCOUNT + 1))
-    forall SCORETOTAL = $((SCORETOTAL + $(score get)))
-    CLASSAVG=$((SCORETOTAL / CLASSCOUNT))
-  }
-  forall rm -f $DFILEBLANK
+	DFILEPAT=".d.*.f"
+	DFILEBLANK=".d.blank.f"
+	GRADEFILE="grade.txt"
+	ASGSCORE=20
+	forall touch $DFILEBLANK
+	scoregen() {
+		score init
+		for DFILE in $DEFILEPAT; do
+			while read LINE; do
+				score $(echo $LINE | cut -d "/" -f 1)
+			done <$DFILE
+		done
+	}
+	forall scoregen
+	scorecap() {
+		if [[ $(score get) -gt $ASGSCORE ]]; then
+			SCORECAP=$(($ASGSCORE - $(score get)))
+			score $SCORECAP
+			echo "$SCORECAP / X | OVERRIDE: Score over defined maximum $ASGSCORE" > $DFILEBLANK
+		elif [[ $(score get) -lt 0 ]]; then
+			SCORECAP=$((-1 * $(score get)))
+			score $SCORECAP
+			echo "$SCORECAP / X | OVERRIDE: Score less than 0" > $DFILEBLANK
+		fi
+	}
+	forall scorecap
+	CLASSCOUNT=0
+	SCORETOTAL=0
+	makeavg(){
+		CLASSCOUNT = $((CLASSCOUNT + 1))
+		SCORETOTAL = $((SCORETOTAL + $(score get)))
+	}
+	forall makeavg
+	CLASSAVG=$((SCORETOTAL / CLASSCOUNT))
+	forall rm -f $DFILEBLANK
 }
 
 export() {
-  echo
+	echo
 }
 
 mail() {
-  echo
+	echo
 }
 
 clean() {
-  echo
+	echo
 }
 
 help() {
-  echo "SPRINT - faster than running"
-  echo "USAGE: sprint [commands]"
-  echo "Default (no commands): $FUNCDEFAULT"
-  echo "All commands: $FUNCALL"
+	echo "SPRINT - faster than running"
+	echo "USAGE: sprint [commands]"
+	echo "Default (no commands): $FUNCDEFAULT"
+	echo "All commands: $FUNCALL"
 }
 
 for ARG in $FUNC; do
-  echo "MODE $ARG"
-  $ARG
+	echo "MODE $ARG"
+	$ARG
 done
