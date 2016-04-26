@@ -18,18 +18,33 @@ for FILE in *; do
 		fi
 	fi
 done
-echo "$JAVASRC"
+EXESRC=${JAVASRC//.java/}
 
-if [[ -e Makefile ]]; then
-	echo "5 / 5 | Makefile exists" >> $DFILE
-else 
-	echo "0 / 5 | No Makefile (ls: $(ls -m))" >> $DFILE
+if make -s $EXESRC; then
+	echo "3 / 3 | Makefile makes correctly" >> $DFILE
+else
+	echo "1 / 3 | Makefile make fails" >> $DFILE
+fi
+
+if [[ -e $EXESRC ]]; then
+	echo "1 / 1 | Executable created correctly" >> $DFILE
+else
+	echo "0 / 1 | Executable not created (ls: $(ls -m))" >> $DFILE
+fi
+
+make -s clean
+
+if [[ -e $EXESRC || -e *.class || -e Manifest ]]; then
+	echo "0 / 1 | Clean target faulty (ls: $(ls -m))" >> $DFILE
+	rm -rf Manifest *.class $EXESRC
+else
+	echo "1 / 1 | Clean target works correctly" >> $DFILE
 fi
 
 cd $BACKUP
 for FILE in *; do
 	if [[ ! -e ../$FILE ]]; then
-		echo "X / X | WARNING! Your Makefile deletes $FILE" >> $DFILE
+		echo "X / X | WARNING! Your Makefile deletes $FILE, very bad" >> $DFILE
 		cp $FILE ..
 	fi
 done

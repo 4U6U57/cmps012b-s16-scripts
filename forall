@@ -14,8 +14,9 @@ forall() {
     STUDENT=$(basename $STUDENT /)
     STUDENTDIR=$ASGDIR/$STUDENT
     cd $STUDENTDIR
-    echo -ne "$STUDENT     \t"
-    $@
+    #echo -ne "$STUDENT     \t"
+    pwd
+	$@
   done
 }
 
