@@ -74,7 +74,6 @@ deduct() {
 	echo "#!/bin/bash" > $DSHBLANK
 	chmod +x $DSHBLANK
 	for DSH in dsh.*.sh; do
-		echo $DSH
 		if [[ $DSH == dsh.*.$USER.sh || $DSH == dsh.*.all.sh ]]; then
 			echo "EXECUTING $DSH"
 			forall $ASGBIN/$DSH
@@ -90,6 +89,8 @@ compile() {
 	DFILEPAT=".d.*.f"
 	DFILEBLANK=".d.blank.f"
 	GRADEFILE="grade.txt"
+	INFOFILE="$ASGBIN/info.f"
+	NOTESFILE=".notes.f"
 	ASGSCORE=20
 	forall touch $DFILEBLANK
 	scoregen() {
@@ -121,6 +122,24 @@ compile() {
 	}
 	forall makeavg
 	CLASSAVG=$((SCORETOTAL / CLASSCOUNT))
+	makeintro() {
+		echo "CLASS:   $CLASS" > $GRADEFILE
+		echo "ASG:     $ASG" >> $GRADEFILE
+		echo "GRADERS: Isaak Joseph Cherdak <icherdak>" >> $GRADEFILE
+		echo "         August Salay Valera <avalera>" >> $GRADEFILE
+		echo "STUDENT: $(getent passwd $STUDENT | cut -d ":" -f 5) <$STUDENT>" >> $GRADEFILE
+		echo "SCORE:   $STUDENTSCORE / $ASGSCORE ($((STUDENTSCORE * 100 / ASGSCORE))%)" >> $GRADEFILE
+		echo "AVERAGE: $CLASSAVG / $ASGSCORE ($((CLASSAVG * 100 / ASGSCORE))%)" >> $GRADEFILE
+	}
+	forall makeintro
+	makebreakdown() {
+		echo >> $GRADEFILE
+		echo "GRADE BREAKDOWN:" >> $GRADEFILE
+		for DFILE in $DFILEPAT; do
+			cat $DFILE >> $GRADEFILE
+		done
+	}
+	forall makebreakdown
 	forall rm -f $DFILEBLANK
 }
 

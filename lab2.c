@@ -39,14 +39,14 @@ int parseInt(char *str) {
 
 void testProg(char *str) {
 	if (!str) {
-		printf("Given null filename for testing\r\n");
+		printf("Given null filename for testing\n");
 		return;
 	}
 	char temps[1024] = {};
 	sprintf(temps, "%s.java", str);
 	FILE *fp = fopen(temps, "r");
 	if (!fp) {
-		printf("Given non-existing file for testing\r\n");
+		printf("Given non-existing file for testing\n");
 		return;
 	}
 	fclose(fp);
@@ -60,27 +60,27 @@ void testProg(char *str) {
 	system(temps);
 	sprintf(temps, "timeout 10s java %s testin out", str);
 	system(temps);
-	printf("\r\n=====\r\nin:\r\n");
+	printf("\n=====\nin:\n");
 	sprintf(temps, "cat testin");
 	system(temps);
-	printf("\r\n=====\r\nout:\r\n");
+	printf("\n=====\nout:\n");
 	sprintf(temps, "cat out");
 	system(temps);
-	printf("\r\n=====\r\ndiff:\r\n");
+	printf("\n=====\ndiff:\n");
 	sprintf(temps, "diff -b out testout");
 	system(temps);
 	sprintf(temps, "rm -f *.class out in testin testout");
 	system(temps);
-	printf("\r\n");
+	printf("\n");
 }
 
 int main (int argc, char **argv) {
-	//printf("This script is not yet ready\r\n");
+	//printf("This script is not yet ready\n");
 	//if (1) return 0;
 
 	char cwd[1024];
 	if (!getcwd(cwd, sizeof(cwd))) {
-		printf("Warning: couldn't get current working directory\r\n");
+		printf("Warning: couldn't get current working directory\n");
 		sprintf(cwd, "<unknown>");
 	}
 
@@ -91,7 +91,7 @@ int main (int argc, char **argv) {
 
 	FILE *fp = fopen(perffile, "r");
 	if (fp) {
-		printf("%s has already been graded\r\n", cwd);
+		printf("%s has already been graded\n", cwd);
 		//char cont[20];
 		fclose(fp);
 		exit(0);
@@ -100,12 +100,12 @@ int main (int argc, char **argv) {
 	sprintf(temp, "%s.java", progfile);
 	fp = fopen(temp, "r");
 	if (!fp) {
-		printf("Warning: %s.java not found\r\nNow setting grade to ", progfile);
-		printf("zero and adding appropriate notes\r\n");
+		printf("Warning: %s.java not found\nNow setting grade to ", progfile);
+		printf("zero and adding appropriate notes\n");
 		gradep = 0;
 		graded = 0;
-		strcpy(notesp, "Output test failed due to lack of code\r\n");
-		strcpy(notesd, "Design grade receives a zero due to lack of code\r\n");
+		strcpy(notesp, "Output test failed due to lack of code\n");
+		strcpy(notesd, "Design grade receives a zero due to lack of code\n");
 	} else {
 		fclose(fp);
 		testProg(progfile);
@@ -114,57 +114,57 @@ int main (int argc, char **argv) {
 		printf("[%s]$ ", scriptname);
 		sfgets(temp, 1023, stdin);
 		if (streq(temp, "-h")) {
-			printf("-h: help\r\n-gp: grade performance\r\n-gd: grade design\r\n");
-			printf("-np: comments performance\r\n-nd: comments design\r\n");
-			printf("-p: print test results\r\n-pc: specify file for -p\r\n");
-			printf("-s: skip\r\n-w: write grade & comments\r\n");
+			printf("-h: help\n-gp: grade performance\n-gd: grade design\n");
+			printf("-np: comments performance\n-nd: comments design\n");
+			printf("-p: print test results\n-pc: specify file for -p\n");
+			printf("-s: skip\n-w: write grade & comments\n");
 		} else if (streq(temp, "-gp")) {
 			int itemp;
-			printf("Please enter a (int) performance grade [0, 5] for %s\r\n", cwd);
+			printf("Please enter a (int) performance grade [0, 5] for %s\n", cwd);
 			sfgets(temp, 1023, stdin);
 			itemp = parseInt(temp);
 			while(itemp > 5 || itemp < 0) {
-				printf("Please enter a (int) performance grade [0, 5] for %s\r\n", cwd);
+				printf("Please enter a (int) performance grade [0, 5] for %s\n", cwd);
 				sfgets(temp, 1023, stdin);
 				itemp = parseInt(temp);
 			}
 			gradep = itemp;
-			printf("The performance grade is now %d/%d\r\n", gradep, perfmax);
+			printf("The performance grade is now %d/%d\n", gradep, perfmax);
 		} else if (streq(temp, "-gd")) {
 			int itemp;
-			printf("Please enter a (int) design grade [0, 5] for %s\r\n", cwd);
+			printf("Please enter a (int) design grade [0, 5] for %s\n", cwd);
 			sfgets(temp, 1023, stdin);
 			itemp = parseInt(temp);
 			while(itemp > 5 || itemp < 0) {
-				printf("Please enter a (int) design grade [0, 5] for %s\r\n", cwd);
+				printf("Please enter a (int) design grade [0, 5] for %s\n", cwd);
 				sfgets(temp, 1023, stdin);
 				itemp = parseInt(temp);
 			}
 			graded = itemp;
-			printf("The design grade is now %d/%d\r\n", graded, desmax);
+			printf("The design grade is now %d/%d\n", graded, desmax);
 		} else if (streq(temp, "-np")) {
-			printf("Please enter the performance comments followed by an EOF\r\n");
+			printf("Please enter the performance comments followed by an EOF\n");
 			notesp[0] = '\0';
 			while(fgets(temp, 1023, stdin)) {
 				strcat(notesp, temp);
 			}
-			printf("Finished adding performance comments to %s\r\n", cwd);
+			printf("Finished adding performance comments to %s\n", cwd);
 		} else if (streq(temp, "-nd")) {
-			printf("Please enter the design comments followed by an EOF\r\n");
+			printf("Please enter the design comments followed by an EOF\n");
 			notesd[0] = '\0';
 			while(fgets(temp, 1023, stdin)) {
 				strcat(notesd, temp);
 			}
-			printf("Finished adding design comments to %s\r\n", cwd);
+			printf("Finished adding design comments to %s\n", cwd);
 		} else if (streq(temp, "-p")) {
 			//sfgets(temp, 1023, stdin);
 			testProg(progfile);
 		} else if (streq(temp, "-pc")) {
-			printf("Please enter a file to try to use for testing\r\n");
+			printf("Please enter a file to try to use for testing\n");
 			sfgets(temp, 1023, stdin);
 			testProg(temp);
 		} else if (streq(temp, "-s")) {
-			printf("Skipping %s\r\n", cwd);
+			printf("Skipping %s\n", cwd);
 			return 0;
 		} else if (streq(temp, "-w")) {
 			break;
@@ -173,20 +173,20 @@ int main (int argc, char **argv) {
 		}
 	}
 	fp = fopen(perffile, "w");
-	fprintf(fp, "%d / %d | Performance: %s\r\n", gradep, perfmax, gradep == 5 ? "Nice Job" : "Please see Performance Notes");
+	fprintf(fp, "%d / %d | Performance: %s\n", gradep, perfmax, gradep == 5 ? "Nice Job" : "Please see Performance Notes");
 	fclose(fp);
 	fp = fopen(desfile, "w");
-	fprintf(fp, "%d / %d | Design: %s\r\n", graded, desmax, graded == 5 ? "Nice Job" : "Please see Design Notes");
+	fprintf(fp, "%d / %d | Design: %s\n", graded, desmax, graded == 5 ? "Nice Job" : "Please see Design Notes");
 	fclose(fp);
 	fp = fopen(notes, "a");
-	fprintf(fp, "\r\n====================\r\n");
-	fprintf(fp, "Performance Notes:\r\n\r\n");
+	fprintf(fp, "\n====================\n");
+	fprintf(fp, "Performance Notes:\n\n");
 	fprintf(fp, "%s", notesp);
-	fprintf(fp, "\r\n====================\r\n");
-	fprintf(fp, "Design Notes:\r\n\r\n");
+	fprintf(fp, "\n====================\n");
+	fprintf(fp, "Design Notes:\n\n");
 	fprintf(fp, "%s", notesd);
-	fprintf(fp, "\r\n====================\r\n");
+	fprintf(fp, "\n====================\n");
 	fclose(fp);
-	printf("Successfully gave %s %d/%d for performance and %d/%d on design\r\n",
+	printf("Successfully gave %s %d/%d for performance and %d/%d on design\n",
 			cwd, gradep, perfmax, graded, desmax);
 }
