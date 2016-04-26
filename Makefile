@@ -3,7 +3,7 @@ BINPATH = ..
 select :
 	echo Please select a valid make target
 
-lab% :  lab%.out lab%.c
+lab% : lab%.out lab%.c
 	mv $< ${BINPATH}/$@/$@
 	cp forall ${BINPATH}/$@
 	cp sprint ${BINPATH}/$@

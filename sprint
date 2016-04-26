@@ -100,7 +100,7 @@ compile() {
 	forall touch $DFILEBLANK
 	scoregen() {
 		score init
-		for DFILE in $DEFILEPAT; do
+		for DFILE in $DFILEPAT; do
 			while read LINE; do
 				score $(echo $LINE | cut -d "/" -f 1)
 			done <$DFILE
