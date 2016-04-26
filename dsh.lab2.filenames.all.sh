@@ -22,7 +22,7 @@ for FILE in *; do
 			SCORE=$((SCORE - 1))
 		fi
 	else
-		echo "X / X | Extra file submitted ($FILE)" >> $DFILE
+		echo "0 / X | Extra file submitted ($FILE)" >> $DFILE
 	fi
 done
 if [[ $SCORE -gt 0 ]]; then
