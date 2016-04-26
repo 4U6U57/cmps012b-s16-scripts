@@ -11,8 +11,8 @@ SEPARATE="=================================================="
 
 # Read arguments
 FUNC=""
-FUNCALL="deduct compile mail export clean help"
-FUNCDEFAULT="deduct export"
+FUNCDEFAULT="deduct compile export"
+FUNCALL="$FUNCDEFAULT mail clean help"
 if [[ $@ == "" ]]; then
 	FUNC="$FUNCDEFAULT"
 else
@@ -61,7 +61,7 @@ score() {
 			echo "0" > $SCOREFILE
 			;;
 		get)
-			return $(cat $SCOREFILE)
+			cat $SCOREFILE
 			;;
 		[0-9]*)
 			echo $(($(score get) + ($@))) > $SCOREFILE
@@ -117,19 +117,19 @@ compile() {
 	CLASSCOUNT=0
 	SCORETOTAL=0
 	makeavg(){
-		CLASSCOUNT = $((CLASSCOUNT + 1))
-		SCORETOTAL = $((SCORETOTAL + $(score get)))
+		CLASSCOUNT=$(($CLASSCOUNT + 1))
+		SCORETOTAL=$(($SCORETOTAL + $(score get)))
 	}
 	forall makeavg
-	CLASSAVG=$((SCORETOTAL / CLASSCOUNT))
+	CLASSAVG=$(($SCORETOTAL / $CLASSCOUNT))
 	makeintro() {
 		echo "CLASS:   $CLASS" > $GRADEFILE
 		echo "ASG:     $ASG" >> $GRADEFILE
 		echo "GRADERS: Isaak Joseph Cherdak <icherdak>" >> $GRADEFILE
 		echo "         August Salay Valera <avalera>" >> $GRADEFILE
 		echo "STUDENT: $(getent passwd $STUDENT | cut -d ":" -f 5) <$STUDENT>" >> $GRADEFILE
-		echo "SCORE:   $STUDENTSCORE / $ASGSCORE ($((STUDENTSCORE * 100 / ASGSCORE))%)" >> $GRADEFILE
-		echo "AVERAGE: $CLASSAVG / $ASGSCORE ($((CLASSAVG * 100 / ASGSCORE))%)" >> $GRADEFILE
+		echo "SCORE:   $(score get) / $ASGSCORE ($(($(score get) * 100 / $ASGSCORE))%)" >> $GRADEFILE
+		echo "AVERAGE: $CLASSAVG / $ASGSCORE ($(($CLASSAVG * 100 / $ASGSCORE))%)" >> $GRADEFILE
 	}
 	forall makeintro
 	makebreakdown() {

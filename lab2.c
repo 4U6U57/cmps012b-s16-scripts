@@ -78,6 +78,43 @@ int main (int argc, char **argv) {
 	//printf("This script is not yet ready\n");
 	//if (1) return 0;
 
+	FILE *fp2 = fopen(".d.performance.f", "r");
+	FILE *fp1 = NULL;
+	if (fp2) {
+		fclose(fp2);
+		system("cat .d.performance.f > .d.ptemp");
+		system("cat .d.design.f > .d.ptemp");
+		system("cat .notes.f > .d.ntemp");
+		fp2 = fopen(".d.ptemp", "r");
+		fp1 = fopen(".d.performance.f", "w");
+		if (!fp2 || !fp1) exit(1);
+		char tempc = '\0';
+		while (fgets(&tempc, 1, fp2)) {
+			if (tempc != '\r') fprintf(fp1, "%c", tempc);
+		}
+		fclose(fp2);
+		fclose(fp1);
+		fp2 = fopen(".d.dtemp", "r");
+		fp1 = fopen(".d.design.f", "w");
+		if (!fp2 || !fp1) exit(1);
+		while (fgets(&tempc, 1, fp2)) {
+			if (tempc != '\r') fprintf(fp1, "%c", tempc);
+		}
+		fclose(fp2);
+		fclose(fp1);
+		fp2 = fopen(".d.ntemp", "r");
+		fp1 = fopen(".d.notes.f", "w");
+		if (!fp2 || !fp1) exit(1);
+		while (fgets(&tempc, 1, fp2)) {
+			if (tempc != '\r') fprintf(fp1, "%c", tempc);
+		}
+		fclose(fp2);
+		fclose(fp1);
+		system("rm -f .d.ptemp .d.dtemp .d.ntemp");
+	}
+
+	if (1) return 0;
+
 	char cwd[1024];
 	if (!getcwd(cwd, sizeof(cwd))) {
 		printf("Warning: couldn't get current working directory\n");
