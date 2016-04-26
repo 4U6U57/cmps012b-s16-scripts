@@ -25,7 +25,7 @@ if [[ -e README ]]; then
 	fi
 	for FILE in FileReverse.java Makefile README; do
 		if ! grep -qP "$FILE" README; then
-			echo "0 / X | Makefile missing reference to file ($FILE)" >> $DFILE
+			echo "0 / X | README missing reference to file ($FILE)" >> $DFILE
 		fi
 	done
 fi

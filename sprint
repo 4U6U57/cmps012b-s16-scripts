@@ -149,7 +149,15 @@ compile() {
 }
 
 export() {
-	echo
+	CSVFILE="$ASGBIN/$CLASS.$ASG.csv"
+	ALLFILE="$ASGBIN/$CLASS.$ASG.$GRADEFILE"
+	echo "student,$ASG" > $CSVFILE
+	echo "$CLASS.$ASG.$GRADEFILE" > $ALLFILE
+	makeexport() {
+		echo "$STUDENT,$(score get)" >> $CSVFILE
+		cat $GRADEFILE >> $ALLFILE
+	}
+	forall makeexport
 }
 
 mail() {
