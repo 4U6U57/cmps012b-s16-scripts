@@ -145,6 +145,21 @@ compile() {
 		done
 	}
 	forall makebreakdown
+	makenotes() {
+		echo >> $GRADEFILE
+		echo "NOTES:" >> $GRADEFILE
+		if [[ -e $NOTESFILE ]]; then
+			cat $NOTESFILE >> $GRADEFILE
+		else
+			echo "N/A" >> $GRADEFILE
+		fi
+	}
+	forall makenotes
+	if [[ -e $INFOFILE ]]; then
+		forall echo >> $GRADEFILE
+		forall echo "INFO:" >> $GRADEFILE
+		forall cat $NOTESFILE >> $GRADEFILE
+	fi
 	forall rm -f $DFILEBLANK
 }
 
@@ -155,17 +170,63 @@ export() {
 	echo "$CLASS.$ASG.$GRADEFILE" > $ALLFILE
 	makeexport() {
 		echo "$STUDENT,$(score get)" >> $CSVFILE
+		echo $(pwd) >> $ALLFILE
 		cat $GRADEFILE >> $ALLFILE
+		echo "$SEPARATE" >> $ALLFILE
 	}
 	forall makeexport
 }
 
 mail() {
-	echo
+	MAILFILE=".mail.f"
+	MAILDELAY=3
+	MAILTIMER=0
+	CLASSCOUNT=0
+	makemailtime(){
+		if [[ -e $MAILFILE ]]; then
+			if diff -q $MAILFILE $GRADEFILE; then
+				rm $MAILFILE
+				MAILTIMER=$(($MAILTIMER + $MAILDELAY))
+			fi
+		else
+			MAILTIMER=$(($MAILTIMER + $MAILDELAY))
+		fi
+		CLASSCOUNT=$(($CLASSCOUNT + 1))
+	}
+	forall makemailtime
+	makemail() {
+		if [[ -e $MAILFILE ]]; then
+			echo "$STUDENT skipped, $MAILTIMER sec remaining"
+		else
+			mailx -s "[$CLASS] $ASG grade for $STUDENT" $EMAIL@ucsc.edu < $GRADEFILE
+			cp $GRADEFILE $MAILFILE
+			echo "$STUDENT mailed, $MAILTIMER sec remaining"
+			MAILTIMER=$(($MAILTIMER - $MAILDELAY))
+			sleep 3
+		fi
+	}
+	echo "About to mail $(($MAILTIMER / $MAILDELAY)) / $CLASSCOUNT students."
+	echo "This will take ~$MAILTIMER secs. You can Ctrl+C at any time."
+	echo -n "Type MAIL in all caps to confirm: "
+	read INPUT
+	if [[ $INPUT == "MAIL" ]]; then
+		echo "Starting mail"
+		forall makemail
+		echo "Ending mail"
+	else
+		echo "Canceled mail"
+	fi
 }
 
 clean() {
-	echo
+	echo "Please type the word CLEAN in all caps to confirm that you would like"
+	echo "to clean $CLASS.$ASG. Note: This will clear out all .f files, meaning"
+	echo "that while grade.txt files will remain, they will not be recompilable."
+	echo -n "Sign off CLEAN = "
+	read INPUT
+	if [[ $INPUT == "CLEAN" ]]; then
+		forall rm -rf .*.f
+	fi
 }
 
 help() {
