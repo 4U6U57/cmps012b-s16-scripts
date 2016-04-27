@@ -78,13 +78,22 @@ deduct() {
 	DSHBLANK="dsh.blank.sh"
 	cd $ASGBIN
 	echo "#!/bin/bash" > $DSHBLANK
+	echo "# CLASS = none" >> $DSHBLANK
 	chmod +x $DSHBLANK
 	for DSH in dsh.*.sh; do
-		if [[ $DSH == dsh.*.$USER.sh || $DSH == dsh.*.all.sh ]]; then
-			echo "EXECUTING $DSH"
+		cd $ASGBIN
+		if ! grep -P 'CLASS' $DSH | grep -Pq "$CLASS"; then
+			echo "DEDUCTSHELL $DSH ignored: $(grep -P 'CLASS' $DSH)"
+		elif ! grep -P "ASG" $DSH | grep -Pq "$ASG"; then
+			echo "DEDUCTSHELL $DSH ingored: $(grep -P 'ASG' $DSH)"
+		elif grep -P 'USER' $DSH | grep -Pq "all"; then
+			echo "DEDUCTSHELL $DSH executed: set for all USERs"
+			forall $ASGBIN/$DSH
+		elif grep -P 'USER' $DSH | grep -Pq "$USER"; then
+			echo "DEDUCTSHELL $DSH executed: recognized USER $USER"
 			forall $ASGBIN/$DSH
 		else
-			echo "IGNORING $DSH"
+			echo "DEDUCTSHELL $DSH ignored: $(grep -P 'USER' $DSH)"
 		fi
 	done
 	cd $ASGBIN
@@ -128,11 +137,14 @@ compile() {
 	forall makeavg
 	CLASSAVG=$(($SCORETOTAL / $CLASSCOUNT))
 	makeintro() {
-		echo "CLASS:   $CLASS" > $GRADEFILE
+		rm -f $GRADEFILE
+		STUDENTLS=$(ls -m)
+		echo "CLASS:   $CLASS" >> $GRADEFILE
 		echo "ASG:     $ASG" >> $GRADEFILE
 		echo "GRADERS: Isaak Joseph Cherdak <icherdak>" >> $GRADEFILE
 		echo "         August Salay Valera <avalera>" >> $GRADEFILE
 		echo "STUDENT: $(getent passwd $STUDENT | cut -d ":" -f 5) <$STUDENT>" >> $GRADEFILE
+		echo "FILES:   $STUDENTLS" >> $GRADEFILE
 		echo "SCORE:   $(score get) / $ASGSCORE ($(($(score get) * 100 / $ASGSCORE))%)" >> $GRADEFILE
 		echo "AVERAGE: $CLASSAVG / $ASGSCORE ($(($CLASSAVG * 100 / $ASGSCORE))%)" >> $GRADEFILE
 	}

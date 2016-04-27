@@ -1,4 +1,7 @@
 #!/bin/bash
+# CLASS cmps012b-pt.s16
+# ASG lab2
+# USER all
 
 ASG="lab2"
 DFILE=".d.comments.f"
@@ -11,7 +14,7 @@ checkcomment() {
 		if [[ ! $(head -c 1 $1) == "$2" ]]; then
 			echo "0 / X | Missing comment block ($1)" >> $DFILE
 		fi
-		if ! grep -qP "$STUDENT" $1; then
+		if ! head -n 5 $1 | grep -qP "$STUDENT"; then
 			echo "0 / X | Missing username identifier ($1)" >> $DFILE
 		fi
 	fi

@@ -1,4 +1,7 @@
 #!/bin/bash
+# CLASS cmps012b-pt.s16
+# ASG lab2
+# USER all
 
 ASG="lab2"
 DFILE=".d.filenames.f"
