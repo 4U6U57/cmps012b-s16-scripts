@@ -209,20 +209,35 @@ mail() {
 		CLASSCOUNT=$(($CLASSCOUNT + 1))
 	}
 	forall makemailtime
+	makeprinttime() {
+		HOURS=0
+		MINUTES=0
+		SECONDS=$@
+		if [[ $SECONDS -ge 60 ]]; then
+			MINUTES=$(($SECONDS / 60))
+			SECONDS=$(($SECONDS % 60))
+		fi
+		if [[ $MINUTES -ge 60 ]]; then
+			HOURS=$(($MINUTES / 60))
+			MINUTES=$(($MINUTES % 60))	
+		fi
+		echo "$HOURS:$MINUTES:$SECONDS"
+	}
 	makemail() {
 		if [[ -e $MAILFILE ]]; then
 			echo "$STUDENT skipped, $MAILTIMER sec remaining"
 		else
 			mailx -s "[$CLASS] $ASG grade for $STUDENT" $EMAIL@ucsc.edu < $GRADEFILE
 			cp $GRADEFILE $MAILFILE
-			echo "$STUDENT mailed, $MAILTIMER sec remaining"
+			echo "$STUDENT mailed, $(makeprinttime $MAILTIMER) remaining"
 			MAILTIMER=$(($MAILTIMER - $MAILDELAY))
 			sleep 3
 		fi
 	}
 	echo "About to mail $(($MAILTIMER / $MAILDELAY)) / $CLASSCOUNT students."
-	echo "This will take ~$MAILTIMER secs. You can Ctrl+C at any time."
-	echo -n "Type MAIL in all caps to confirm: "
+	echo "This will take ~$(makeprinttime $MAILTIMER). You can Ctrl+C at any time."
+	echo "Type MAIL in all caps to confirm, or anything else to cancel."
+	echo -n "MAIL: "
 	read INPUT
 	if [[ $INPUT == "MAIL" ]]; then
 		echo "Starting mail"
