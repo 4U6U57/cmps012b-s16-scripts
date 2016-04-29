@@ -199,7 +199,7 @@ mail() {
 	CLASSCOUNT=0
 	makemailtime(){
 		if [[ -e $MAILFILE ]]; then
-			if diff -q $MAILFILE $GRADEFILE; then
+			if ! diff -q $MAILFILE $GRADEFILE; then
 				rm $MAILFILE
 				MAILTIMER=$(($MAILTIMER + $MAILDELAY))
 			fi
@@ -225,13 +225,13 @@ mail() {
 	}
 	makemail() {
 		if [[ -e $MAILFILE ]]; then
-			echo "$STUDENT skipped, $MAILTIMER sec remaining"
+			echo "$STUDENT skipped, $(makeprinttime $MAILTIMER) remaining"
 		else
-			mailx -s "[$CLASS] $ASG grade for $STUDENT" $EMAIL@ucsc.edu < $GRADEFILE
-			cp $GRADEFILE $MAILFILE
+			mailx -s "[$CLASS] $ASG grade for $STUDENT" $STUDENT@ucsc.edu < $GRADEFILE
+			cat $GRADEFILE > $MAILFILE
 			echo "$STUDENT mailed, $(makeprinttime $MAILTIMER) remaining"
 			MAILTIMER=$(($MAILTIMER - $MAILDELAY))
-			sleep 3
+			sleep $MAILDELAY
 		fi
 	}
 	echo "About to mail $(($MAILTIMER / $MAILDELAY)) / $CLASSCOUNT students."
