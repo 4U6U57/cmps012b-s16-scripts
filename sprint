@@ -167,10 +167,13 @@ compile() {
 		fi
 	}
 	forall makenotes
+	makeinfo() {
+		echo >> $GRADEFILE
+		echo "INFO:" >> $GRADEFILE
+		cat $INFOFILE >> $GRADEFILE
+	}
 	if [[ -e $INFOFILE ]]; then
-		forall echo >> $GRADEFILE
-		forall echo "INFO:" >> $GRADEFILE
-		forall cat $NOTESFILE >> $GRADEFILE
+		forall makeinfo
 	fi
 	forall rm -f $DFILEBLANK
 }

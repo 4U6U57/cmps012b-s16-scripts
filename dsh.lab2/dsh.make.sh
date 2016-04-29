@@ -7,7 +7,7 @@ ASG="lab2"
 DFILE=".d.make.f"
 BACKUP=".backup"
 
-rm -f $DFILE # uncomment to run make everytime
+# rm -f $DFILE # uncomment to run make everytime
 if [[ ! -e $DFILE ]]; then
 	rm -rf $BACKUP/
 	mkdir $BACKUP
