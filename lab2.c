@@ -81,6 +81,60 @@ int main (int argc, char **argv) {
 		printf("Warning: couldn't get current working directory\n");
 		sprintf(cwd, "<unknown>");
 	}
+	#ifdef DeDOS
+	FILE *fpc = fopen(perffile, "r");
+	char repl[4096] = {};
+	int iter;
+	if (fpc) {
+		char trepl[201];
+		while(fgets(trepl, 200, fpc)) strcat(repl, trepl);
+		fclose(fpc);
+		fpc = fopen(perffile, "w");
+		iter = 0;
+		while (iter < strlen(repl)) {
+			if (repl[iter] != '\r') {
+				fputc(repl[iter], fpc);
+			}
+			iter++;
+		}
+		fclose(fpc);
+	}
+	fpc = fopen(desfile, "r");
+	repl[0] = '\0';
+	if (fpc) {
+		char trepl[201];
+		while(fgets(trepl, 200, fpc)) strcat(repl, trepl);
+		fclose(fpc);
+		fpc = fopen(desfile, "w");
+		iter = 0;
+		while (iter < strlen(repl)) {
+			if (repl[iter] != '\r') {
+				fputc(repl[iter], fpc);
+			}
+			iter++;
+		}
+		fclose(fpc);
+	}
+	fpc = fopen(notes, "r");
+	repl[0] = '\0';
+	if (fpc) {
+		char trepl[201];
+		while(fgets(trepl, 200, fpc)) strcat(repl, trepl);
+		fclose(fpc);
+		fpc = fopen(notes, "w");
+		iter = 0;
+		while (iter < strlen(repl)) {
+			if (repl[iter] != '\r') {
+				fputc(repl[iter], fpc);
+			}
+			iter++;
+		}
+		fclose(fpc);
+	}
+
+	if (1) return 0;
+
+	#endif
 
 	int gradep = 5; // p: performance, d: design
 	int graded = 5;

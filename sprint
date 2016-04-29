@@ -139,14 +139,14 @@ compile() {
 	makeintro() {
 		rm -f $GRADEFILE
 		STUDENTLS=$(ls -m)
-		echo "CLASS:   $CLASS" >> $GRADEFILE
-		echo "ASG:     $ASG" >> $GRADEFILE
-		echo "GRADERS: Isaak Joseph Cherdak <icherdak>" >> $GRADEFILE
-		echo "         August Salay Valera <avalera>" >> $GRADEFILE
-		echo "STUDENT: $(getent passwd $STUDENT | cut -d ":" -f 5) <$STUDENT>" >> $GRADEFILE
-		echo "FILES:   $STUDENTLS" >> $GRADEFILE
-		echo "SCORE:   $(score get) / $ASGSCORE ($(($(score get) * 100 / $ASGSCORE))%)" >> $GRADEFILE
-		echo "AVERAGE: $CLASSAVG / $ASGSCORE ($(($CLASSAVG * 100 / $ASGSCORE))%)" >> $GRADEFILE
+		echo "CLASS: 	$CLASS" >> $GRADEFILE
+		echo "ASG: 	$ASG" >> $GRADEFILE
+		echo "GRADERS: 	Isaak Joseph Cherdak <icherdak>" >> $GRADEFILE
+		echo " 		August Salay Valera <avalera>" >> $GRADEFILE
+		echo "STUDENT: 	$(getent passwd $STUDENT | cut -d ":" -f 5) <$STUDENT>" >> $GRADEFILE
+		echo "FILES: 	$STUDENTLS" >> $GRADEFILE
+		echo "SCORE: 	$(score get) / $ASGSCORE ($(($(score get) * 100 / $ASGSCORE))%)" >> $GRADEFILE
+		echo "AVERAGE: 	$CLASSAVG / $ASGSCORE ($(($CLASSAVG * 100 / $ASGSCORE))%)" >> $GRADEFILE
 	}
 	forall makeintro
 	makebreakdown() {
@@ -219,7 +219,7 @@ mail() {
 		fi
 		if [[ $MINUTES -ge 60 ]]; then
 			HOURS=$(($MINUTES / 60))
-			MINUTES=$(($MINUTES % 60))	
+			MINUTES=$(($MINUTES % 60))
 		fi
 		echo "$HOURS:$MINUTES:$SECONDS"
 	}
@@ -227,7 +227,7 @@ mail() {
 		if [[ -e $MAILFILE ]]; then
 			echo "$STUDENT skipped, $(makeprinttime $MAILTIMER) remaining"
 		else
-			mailx -s "[$CLASS] $ASG grade for $STUDENT" $STUDENT@ucsc.edu < $GRADEFILE
+			cat $GRADEFILE | mailx -s "[$CLASS] $ASG grade for $STUDENT" $STUDENT@ucsc.edu
 			cat $GRADEFILE > $MAILFILE
 			echo "$STUDENT mailed, $(makeprinttime $MAILTIMER) remaining"
 			MAILTIMER=$(($MAILTIMER - $MAILDELAY))
