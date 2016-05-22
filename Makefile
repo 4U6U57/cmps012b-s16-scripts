@@ -3,10 +3,11 @@ BINPATH = ..
 select :
 	echo Please select a valid make target
 
-lab% : lab%.out lab%.c
-	mv $< ${BINPATH}/$@/$@
+lab% : 
+	#lab%.out lab%.c
+	#mv $< ${BINPATH}/$@/$@
+	cp $@.scripts/* ${BINPATH}/$@
 	cp forall ${BINPATH}/$@
-	cp sprint ${BINPATH}/$@
 	ls ${BINPATH}/$@
 
 lab%.out : lab%.c
@@ -15,9 +16,7 @@ lab%.out : lab%.c
 	rm -f ${@:.out=.o}
 
 slab% : lab% pull
-	rm -f ${BINPATH}/$</dsh.*.sh
-	cp dsh.$</dsh.*.sh ${BINPATH}/$<
-	${BINPATH}/$</sprint
+	${BINPATH}/$</stable.sh
 
 flab% : lab%
 	${BINPATH}/$</forall
@@ -27,6 +26,6 @@ clean :
 	
 submit : clean push
 
-.PHONY : select lab* slab* flab* clean submit
+.PHONY : select lab* slab* flab* nlab* clean submit
 
 include git.mk

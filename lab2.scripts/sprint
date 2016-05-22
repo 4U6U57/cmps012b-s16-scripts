@@ -139,13 +139,13 @@ compile() {
 	makeintro() {
 		rm -f $GRADEFILE
 		STUDENTLS=$(ls -m)
-		echo "CLASS: 	$CLASS" >> $GRADEFILE
-		echo "ASG: 	$ASG" >> $GRADEFILE
+		echo "CLASS: 		$CLASS" >> $GRADEFILE
+		echo "ASG: 			$ASG" >> $GRADEFILE
 		echo "GRADERS: 	Isaak Joseph Cherdak <icherdak>" >> $GRADEFILE
-		echo " 		August Salay Valera <avalera>" >> $GRADEFILE
+		echo " 			August Salay Valera <avalera>" >> $GRADEFILE
 		echo "STUDENT: 	$(getent passwd $STUDENT | cut -d ":" -f 5) <$STUDENT>" >> $GRADEFILE
-		echo "FILES: 	$STUDENTLS" >> $GRADEFILE
-		echo "SCORE: 	$(score get) / $ASGSCORE ($(($(score get) * 100 / $ASGSCORE))%)" >> $GRADEFILE
+		echo "FILES: 			$STUDENTLS" >> $GRADEFILE
+		echo "SCORE: 			$(score get) / $ASGSCORE ($(($(score get) * 100 / $ASGSCORE))%)" >> $GRADEFILE
 		echo "AVERAGE: 	$CLASSAVG / $ASGSCORE ($(($CLASSAVG * 100 / $ASGSCORE))%)" >> $GRADEFILE
 	}
 	forall makeintro
