@@ -114,7 +114,7 @@ grade() {
    else
       bash -c "make" > /dev/null 2>&1
       if [[ ! -e $EXE ]]; then
-         ALTEXE=( char FileReverse charTypE )
+         ALTEXE="char FileReverse charTypE"
          for ALT in $ALTEXE; do
             if [[ -e $ALT ]]; then
                EXE=$ALT
