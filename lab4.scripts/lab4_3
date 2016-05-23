@@ -1,0 +1,6 @@
+echo ""
+echo "HERE IS THE MAKEFILE"
+echo "==========="
+cat Makefile
+echo "==========="
+echo ""

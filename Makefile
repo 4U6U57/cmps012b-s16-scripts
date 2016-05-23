@@ -21,6 +21,9 @@ slab% : lab% pull
 flab% : lab%
 	${BINPATH}/$</forall
 
+alab4 :
+	cp lab4.scripts/lab4_* ../lab4
+
 clean :	
 	rm -f *.o
 	

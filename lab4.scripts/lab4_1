@@ -1,0 +1,6 @@
+echo ""
+echo "HERE ARE THE C FILES"
+echo "=========="
+cat CharType.c
+echo "=========="
+echo ""
