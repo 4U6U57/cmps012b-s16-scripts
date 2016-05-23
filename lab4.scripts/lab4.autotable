@@ -1,0 +1,28 @@
+1: Design
+1.desc.1: Program doesn't check for null properly
+1.desc.2: Charity Points
+1.maxpts: 5
+2: Performance
+2.desc.1: Charity Points
+2.maxpts: 5
+3: Makefile
+3.desc.1: At least two of your targets are incorrect
+3.maxpts: 2
+4: Comment Block
+4.desc.1: Comment block invalid or nonexistant
+4.maxpts: 1
+5: Naming 1
+5.desc.1: File <> named incorrectly
+5.maxpts: 1
+6: Naming 2
+6.desc.1: File <> named incorrectly
+6.maxpts: 1
+7: Naming 3
+7.desc.1: File <> named incorrectly
+7.maxpts: 1
+8: Memory Leaks
+8.desc.1: Your program contained memory leaks
+8.maxpts: 2
+9: Function Prototype
+9.desc.1: Didn't follow specified function prototype
+9.maxpts: 2
