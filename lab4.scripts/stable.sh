@@ -55,7 +55,7 @@ restore() {
    for FILE in *; do
       if [[ ! -e $1/$FILE ]]; then
          echo "RESTORE: $FILE created during grading, deleting"
-         rm -f $FILE
+         rm -f ./$FILE
       fi
    done
    for FILE in $1/*; do
@@ -86,20 +86,56 @@ checkfilename() {
    fi
 }
 declare -A FILES
-FILES=( [Makefile]=*ake* [README]=README* [charType.c]=*ype* )
+declare -A NUMBERS
+FILES=( [Makefile]=*ake* [README]=R* [charType.c]=*ype* )
+NUMBERS=( [Makefile]=5 [README]=6 [charType.c]=7 )
 grade() {
    # Actual grading code here
    for FILE in ${!FILES[@]}; do
-      echo -n "  " #remove
       CHECK=$(checkfilename $FILE ${FILES[$FILE]})
       if [[ $CHECK == $FILE ]]; then
-         echo "$FILE submitted correctly"
+         STUDENTTABLE[grade.${NUMBERS[$FILE]}]=P
+         STUDENTTABLE[notes.${NUMBERS[$FILE]}]="$FILE submitted correctly"
       elif echo $CHECK | grep -qP "\-\>"; then
-         echo "$FILE named incorrectly ($CHECK)"
+         STUDENTTABLE[grade.${NUMBERS[$FILE]}]=C
+         STUDENTTABLE[notes.${NUMBERS[$FILE]}]="$FILE named incorrectly ($CHECK)"
       else
-         echo "$FILE missing (ls: $(ls -m))"
+         STUDENTTABLE[grade.${NUMBERS[$FILE]}]=C
+         STUDENTTABLE[notes.${NUMBERS[$FILE]}]="$FILE missing (ls: $(ls -m))"
+      fi
+      if [[ $FILE == charType.c ]]; then
+         EXE=$(basename $(echo $CHECK | cut -d '>' -f 2) .c)
       fi
    done
+
+   if echo $EXE | grep -qP "\?"; then
+      STUDENTTABLE[grade.8]=0
+      STUDENTTABLE[notes.8]="No source code to check leaks (ls: $(ls -m))"
+   else
+      bash -c "make" > /dev/null 2>&1
+      if [[ ! -e $EXE ]]; then
+         ALTEXE="char FileReverse charTypE"
+         for ALT in $ALTEXE; do
+            if [[ -e $ALT ]]; then
+               EXE=$ALT
+            fi
+         done
+      fi
+      if [[ -e $EXE ]]; then
+         LEAKS=$(valgrind --log-fd=1 $EXE charType.c | grep -P "in use at exit")
+         if [[ $(echo $LEAKS | cut -d ":" -f 2 | cut -d " " -f 2) == 0 ]]; then
+            STUDENTTABLE[grade.8]=P
+            STUDENTTABLE[notes.8]="Program ran without leaks"
+         else
+            STUDENTTABLE[grade.8]=C
+            STUDENTTABLE[notes.8]="Program ran with leaks (valgrind: $LEAKS)"
+         fi
+      else
+         STUDENTTABLE[grade.8]=P
+         STUDENTTABLE[notes.8]="No exe to check leaks (ls: $(ls -m))"
+      fi
+      rm -f $EXE *.o
+   fi
 }
 main() {
    BACKUP=".backup"
