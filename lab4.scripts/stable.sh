@@ -168,7 +168,7 @@ main() {
    readtable $ASGTABLE/student_$STUDENT.autotable
    grade
    restore $BACKUP
-   writetable $ASGTABLE/.student_$STUDENT.autotable.swp
+   writetable $ASGTABLE/student_$STUDENT.autotable
    cleartable
 }
 forall main
