@@ -89,8 +89,11 @@ declare -A FILES
 declare -A NUMBERS
 FILES=( [Makefile]=*ake* [README]=R* [charType.c]=*ype* )
 NUMBERS=( [Makefile]=5 [README]=6 [charType.c]=7 )
+ALTEXE="char FileReverse charTypE"i
 grade() {
    # Actual grading code here
+
+   # Filenames (#5-7)
    for FILE in ${!FILES[@]}; do
       CHECK=$(checkfilename $FILE ${FILES[$FILE]})
       if [[ $CHECK == $FILE ]]; then
@@ -108,13 +111,13 @@ grade() {
       fi
    done
 
+   # Valgrind (#8)
    if echo $EXE | grep -qP "\?"; then
       STUDENTTABLE[grade.8]=0
       STUDENTTABLE[notes.8]="No source code to check leaks (ls: $(ls -m))"
    else
       bash -c "make" > /dev/null 2>&1
       if [[ ! -e $EXE ]]; then
-         ALTEXE="char FileReverse charTypE"
          for ALT in $ALTEXE; do
             if [[ -e $ALT ]]; then
                EXE=$ALT
@@ -132,10 +135,31 @@ grade() {
          fi
       else
          STUDENTTABLE[grade.8]=P
-         STUDENTTABLE[notes.8]="No exe to check leaks (ls: $(ls -m))"
+         STUDENTTABLE[notes.8]="No executable to check leaks (ls: $(ls -m))"
       fi
-      rm -f $EXE *.o
    fi
+
+   # Performance (#2)
+   if [[ ! -e $EXE ]]; then
+      STUDENTTABLE[grade.2]=C
+      STUDENTTABLE[notes.2]="No executable to check diff (ls: $(ls -m))"
+   else
+      $EXE $ASGBIN/in out
+      DIFF=$((5 - ($(diff -iwB out $ASGBIN/out | grep "^>" | wc -l) / 4)))
+      if [[ $DIFF -le 1 ]]; then
+         DIFF=C
+      fi
+      if [[ $DIFF == 5 ]]; then
+         STUDENTTABLE[grade.2]=P
+         STUDENTTABLE[notes.2]="Program passed diff test"
+      else 
+         STUDENTTABLE[grade.2]=$DIFF
+         DIFF=$(diff -iwb out $ASGBIN/out | grep -Pv "^<|^>|^-" | tr '\n' ' ' | head -c -1)
+         STUDENTTABLE[notes.2]="Program failed diff (diff: $DIFF)"
+      fi
+   fi
+
+   rm -f $EXE *.o out
 }
 main() {
    BACKUP=".backup"
