@@ -89,7 +89,7 @@ declare -A FILES
 declare -A NUMBERS
 FILES=( [Makefile]=*ake* [README]=R* [charType.c]=*ype* )
 NUMBERS=( [Makefile]=5 [README]=6 [charType.c]=7 )
-ALTEXE="char FileReverse charTypE"i
+ALTEXE="char FileReverse charTypE -std\=c99"
 grade() {
    # Actual grading code here
 
@@ -106,10 +106,61 @@ grade() {
          STUDENTTABLE[grade.${NUMBERS[$FILE]}]=C
          STUDENTTABLE[notes.${NUMBERS[$FILE]}]="$FILE missing (ls: $(ls -m))"
       fi
+
       if [[ $FILE == charType.c ]]; then
          EXE=$(basename $(echo $CHECK | cut -d '>' -f 2) .c)
+      elif [[ $FILE == Makefile ]]; then
+         MAKE=$(echo $CHECK | cut -d '>' -f 2)
       fi
    done
+
+   # Makefile (#3)
+   MAKESCORE=2
+   MAKEMSG=""
+   if echo $EXE | grep -qP "\?"; then
+      MAKEMSG="No source code to check make"
+   else
+      bash -c "make" > /dev/null 2>&1
+      if [[ ! -e $EXE ]]; then
+         for ALT in $ALTEXE; do
+            if [[ -e $ALT ]]; then
+               EXE=$ALT
+            fi
+         done
+      fi
+      if [[ -e $EXE ]]; then
+         MAKEMSG+="Makefile compiled executable"
+      else
+         MAKESCORE=$(($MAKESCORE - 1))
+         MAKEMSG+="Makefile did not compile executable"
+         echo "PLACEHOLDER EXECUTABLE" > $EXE
+      fi
+      bash -c "make clean" > /dev/null 2>&1
+      if [[ ! -e $EXE ]]; then
+         MAKEMSG+=", cleaned properly"
+      else
+         MAKESCORE=$(($MAKESCORE - 1))
+         MAKEMSG+=", did not clean"
+         rm -f $EXE
+      fi
+      for FILE in $BACKUP/*; do
+         FILE=$(basename $FILE)
+         if [[ ! -e $FILE ]]; then
+            cp $BACKUP/$FILE $FILE
+            MAKESCORE=$(($MAKESCORE - 1))
+            MAKEMSG+=", deleted $FILE"
+         elif ! diff -q $FILE $BACKUP/$FILE; then
+            cp $BACKUP/$FILE $FILE
+            MAKESCORE=$(($MAKESCORE - 1))
+            MAKEMSG+=", edited source file $FILE"
+         fi
+      done
+      if [[ $MAKESCORE -lt 0 ]]; then
+         MAKESCORE=0
+      fi
+   fi
+   STUDENTTABLE[grade.3]=$MAKESCORE
+   STUDENTTABLE[notes.3]="$MAKEMSG"
 
    # Valgrind (#8)
    if echo $EXE | grep -qP "\?"; then
@@ -144,7 +195,7 @@ grade() {
       STUDENTTABLE[grade.2]=C
       STUDENTTABLE[notes.2]="No executable to check diff (ls: $(ls -m))"
    else
-      $EXE $ASGBIN/in out
+      ./$EXE $ASGBIN/in out > /dev/null 1>&2
       DIFF=$((5 - ($(diff -iwB out $ASGBIN/out | grep "^>" | wc -l) / 4)))
       if [[ $DIFF -le 1 ]]; then
          DIFF=C
@@ -152,7 +203,7 @@ grade() {
       if [[ $DIFF == 5 ]]; then
          STUDENTTABLE[grade.2]=P
          STUDENTTABLE[notes.2]="Program passed diff test"
-      else 
+      else
          STUDENTTABLE[grade.2]=$DIFF
          DIFF=$(diff -iwb out $ASGBIN/out | grep -Pv "^<|^>|^-" | tr '\n' ' ' | head -c -1)
          STUDENTTABLE[notes.2]="Program failed diff (diff: $DIFF)"
@@ -168,7 +219,8 @@ main() {
    readtable $ASGTABLE/student_$STUDENT.autotable
    grade
    restore $BACKUP
-   writetable $ASGTABLE/student_$STUDENT.autotable
+   writetable $ASGTABLE/.student_$STUDENT.autotable.swp
+   #writetable $ASGTABLE/student_$STUDENT.autotable
    cleartable
 }
 forall main
