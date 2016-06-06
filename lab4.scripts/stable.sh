@@ -89,7 +89,7 @@ declare -A FILES
 declare -A NUMBERS
 FILES=( [Makefile]=*ake* [README]=R* [charType.c]=*ype* )
 NUMBERS=( [Makefile]=5 [README]=6 [charType.c]=7 )
-ALTEXE="char FileReverse charTypE -std\=c99"
+ALTEXE="char FileReverse charTypE ./-std\=c99"
 grade() {
    # Actual grading code here
 
