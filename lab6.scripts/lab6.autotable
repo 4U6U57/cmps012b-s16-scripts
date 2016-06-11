@@ -1,5 +1,9 @@
 1: Design
-1.desc.1: Charity Points
+1.desc.1: Your program contained instances of non-generics based operation
+1.desc.2: Your program contained problematic design decisions
+1.desc.3: Charity Points
+1.desc.4: Unacceptable design
+1.charity: 2
 1.maxpts: 5
 2: Performance
 2.desc.1: Charity Points
@@ -10,17 +14,18 @@
 4: Comment Block
 4.desc.1: Comment block invalid or nonexistant
 4.maxpts: 1
-5: Naming (Makefile)
+5: Naming (List.java)
 5.desc.1: File <> named incorrectly
 5.maxpts: 1
-6: Naming (README)
+6: Naming (Makefile)
 6.desc.1: File <> named incorrectly
 6.maxpts: 1
-7: Naming (*.java)
-7.desc.1: Files <> named incorrectly
+7: Naming (ListTest.java)
+7.desc.1: File <> named incorrectly
 7.maxpts: 1
 8: Compiler Warnings
 8.desc.1: Your program contained compiler warnings
+8.desc.2: Your program contained more than 5 compiler warnings
 8.maxpts: 2
 9: Properly integrates the interface
 9.desc.1: Didn't integrate interface

@@ -202,13 +202,16 @@ mail() {
 			if ! diff -q $MAILFILE $GRADEFILE; then
 				rm $MAILFILE
 				MAILTIMER=$(($MAILTIMER + $MAILDELAY))
+            echo -n $STUDENT " "
 			fi
 		else
 			MAILTIMER=$(($MAILTIMER + $MAILDELAY))
+         echo -n $STUDENT " "
 		fi
 		CLASSCOUNT=$(($CLASSCOUNT + 1))
 	}
 	forall makemailtime
+   echo
 	makeprinttime() {
 		HOURS=0
 		MINUTES=0

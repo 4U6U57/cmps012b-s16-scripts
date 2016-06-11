@@ -1,0 +1,7 @@
+echo ""
+echo "HERE IS LIST.JAVA"
+echo "=========="
+more List.java
+echo ""
+echo "=========="
+echo ""
