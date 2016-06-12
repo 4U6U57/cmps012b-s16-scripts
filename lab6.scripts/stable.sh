@@ -142,36 +142,45 @@ grade() {
    FUNCS=( "public boolean isEmpty()" "public int size()" "public T get(int index) throws ListIndexOutOfBoundsException" "public void add(int index, T newItem) throws ListIndexOutOfBoundsException" "public void remove(int index) throws ListIndexOutOfBoundsException" "public void removeAll()" )
    CHECK=0
    MSG+="Interface checks: \n"
-   for FUNC in "${FUNCS[@]}"; do
-      FUNCREGEX=${FUNC// /\\s*}
-      FUNCREGEX=${FUNCREGEX//index/.*}
-      FUNCREGEX=${FUNCREGEX//newItem/.*}
+   if [[ ! -e List.java ]]; then
+      MSG+=" MISSING source code List.c, cannot check interface\n"
+   else
+      for FUNC in "${FUNCS[@]}"; do
+         FUNCREGEX=${FUNC// /\\s*}
+         FUNCREGEX=${FUNCREGEX//index/.*}
+         FUNCREGEX=${FUNCREGEX//newItem/.*}
 
-      if grep "$FUNCREGEX" List.java > /dev/null; then
-         MSG+=" FOUND function $FUNC\n"
-      else
-         MSG+=" MODIFIED function $FUNC\n"
-         CHECK=$(($CHECK + 1))
+         if grep "$FUNCREGEX" List.java > /dev/null; then
+            MSG+=" FOUND function $FUNC\n"
+         else
+            MSG+=" MODIFIED function $FUNC\n"
+            CHECK=$(($CHECK + 1))
+         fi
+      done
+      if [[ $CHECK -gt 2 ]]; then
+         SCORE=$(($SCORE - 1))
       fi
-   done
-   if [[ $CHECK -gt 2 ]]; then
-      SCORE=$(($SCORE - 1))
-   fi
 
-   if [[ $SCORE -eq 2 ]]; then
-      SCORE=P
-   elif [[ $SCORE -eq 0 ]]; then
-      SCORE=C
+      if [[ $SCORE -eq 2 ]]; then
+         SCORE=P
+      elif [[ $SCORE -eq 0 ]]; then
+         SCORE=C
+      fi
    fi
    STUDENTTABLE[grade.9]=$SCORE
    STUDENTTABLE[notes.9]="$MSG"
 
-   # Performance (#2)
-
    # Makefile (#3)
+   SCORE=2
+   MSG=""
+
+   # Performance (#2)
+   SCORE=5
+   MSG=""
 
    # Comment Block (#4)
-
+   SCORE=1
+   MSG=""
 
 }
 
