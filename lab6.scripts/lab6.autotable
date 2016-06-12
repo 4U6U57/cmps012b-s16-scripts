@@ -3,6 +3,8 @@
 1.desc.2: Your program contained problematic design decisions
 1.desc.3: Charity Points
 1.desc.4: Unacceptable design
+1.desc.5: Flawed equals() function
+1.desc.6: Heavily flawed equals() function
 1.charity: 2
 1.maxpts: 5
 2: Performance

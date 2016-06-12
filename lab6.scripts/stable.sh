@@ -117,6 +117,43 @@ grade() {
       fi
    done
 
+   # Comment Block (#4)
+   SCORE=1
+   MSG="Comment block checks: \n"
+   for FILE in ${!FILES[@]}; do
+      if [[ ! -e $FILE ]]; then
+         MSG+=" MISSING file $FILE, cannot check comment\n"
+      else
+         if [[ $FILE =~ .*.java ]]; then
+            COMMENT=/
+         else
+            COMMENT=\#
+         fi
+         if [[ $(head -c 1 $FILE) == $COMMENT ]]; then
+            MSG+=" FOUND $FILE comment block\n"
+         else
+            FIRST=$(head -c 1 $FILE)
+            MSG+=" MISSING $FILE comment block (${FIRST//\n/\\n})\n"
+            SCORE=0
+         fi
+      fi
+   done
+   MSG+="Username identifier checks: \n"
+   for FILE in ${!FILES[@]}; do
+      if [[ ! -e $FILE ]]; then
+         MSG+=" MISSING file $FILE, cannot check username identifier\n"
+      else
+         if ! head -n 5 $FILE | grep -qP "$STUDENT"; then
+            MSG+=" MISSING $FILE comment block indentifier\n"
+         else
+            MSG+=" FOUND $FILE comment block indentifier\n"
+         fi
+      fi
+   done
+   echo -e $MSG
+   STUDENTTABLE[grade.4]=$SCORE
+   STUDENTTABLE[notes.4]="$MSG"
+
    # Interface testing (#9)
    SCORE=2
    DEPS=( ListInterface.java ListIndexOutOfBoundsException.java ListClient.java )
@@ -139,12 +176,14 @@ grade() {
       SCORE=$(($SCORE - 1))
    fi
 
+   INTER="public\s*class\s*List<T>\s*implements\s*ListInterface<T>"
    FUNCS=( "public boolean isEmpty()" "public int size()" "public T get(int index) throws ListIndexOutOfBoundsException" "public void add(int index, T newItem) throws ListIndexOutOfBoundsException" "public void remove(int index) throws ListIndexOutOfBoundsException" "public void removeAll()" )
    CHECK=0
    MSG+="Interface checks: \n"
    if [[ ! -e List.java ]]; then
-      MSG+=" MISSING source code List.c, cannot check interface\n"
-   else
+      MSG+=" MISSING source code List.java, cannot check interface\n"
+   elif grep "$INTER" List.java > /dev/null; then
+      MSG+=" FOUND implements statement\n"
       for FUNC in "${FUNCS[@]}"; do
          FUNCREGEX=${FUNC// /\\s*}
          FUNCREGEX=${FUNCREGEX//index/.*}
@@ -166,20 +205,73 @@ grade() {
       elif [[ $SCORE -eq 0 ]]; then
          SCORE=C
       fi
+   else
+      MSG+=" MISSING implements statement in List.java, cannot check functions\n"
    fi
    STUDENTTABLE[grade.9]=$SCORE
    STUDENTTABLE[notes.9]="$MSG"
 
    # Makefile (#3)
    SCORE=2
-   MSG=""
+   MSG="Makefile checks: \n"
+   EXE="ListClient"
+   ALTS=( List ListTest )
+   if [[ ! -e List.java ]]; then
+      MSG+=" MISSING source code, cannot check make\n"
+   else
+      bash -c "make $EXE" > /dev/null 2>&1
+      if [[ -e $EXE ]]; then
+         MSG+=" COMPILED $EXE successfully\n"
+      else
+         bash -c "make" > /dev/null 2>&1
+
+         for ALT in ${ALTS[@]}; do
+            if [[ -e $ALT ]]; then
+               EXE=$ALT
+            fi
+         done
+
+         if [[ -e $EXE ]]; then
+            MSG+=" COMPILED $EXE successfully\n"
+         else
+            SCORE=$(($SCORE - 1))
+            MSG+=" MISSING $EXE, was not compiled by Makefile (ls: $(ls -m))\n"
+            echo "PLACEHOLDER EXECUTABLE" > $EXE
+         fi
+      fi
+      bash -c "make clean" > /dev/null 2>&1
+      if [[ ! -e $EXE ]]; then
+         MSG+=" CLEANED $EXE sucessfully\n"
+      else
+         SCORE=$(($SCORE - 1))
+         MSG+=" MISSING clean statement, $EXE still exists (ls: $(ls -m))\n"
+         rm -f $EXE
+      fi
+      for FILE in ${!FILES[@]}; do
+         if [[ -e $BACKUP/$FILE ]]; then
+            if [[ ! -e $FILE ]]; then
+               cp $BACKUP/$FILE $FILE
+               SCORE=$(($SCORE - 1))
+               MSG+=" MISSING file $FILE, deleted by Makefile\n"
+            elif ! diff -q $FILE $BACKUP/$FILE > /dev/null; then
+               cp $BACKUP/$FILE $FILE
+               SCORE=$(($SCORE - 1))
+               MSG+=" MODIFIED file $FILE, corrupted by Makefile\n"
+            fi
+         fi
+      done
+   fi
+   if [[ $SCORE -lt 0 ]]; then
+      SCORE=S
+   elif [[ $SCORE -eq 2 ]]; then
+      SCORE=C
+   fi
+   echo -e "$MSG"
+   STUDENTTABLE[grade.3]=$SCORE
+   STUDENTTABLE[notes.3]="$MSG"
 
    # Performance (#2)
    SCORE=5
-   MSG=""
-
-   # Comment Block (#4)
-   SCORE=1
    MSG=""
 
 }
