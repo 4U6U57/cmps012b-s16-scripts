@@ -28,6 +28,7 @@
 8: Compiler Warnings
 8.desc.1: Your program contained compiler warnings
 8.desc.2: Your program contained more than 5 compiler warnings
+8.desc.3: Your program doesn't compile
 8.maxpts: 2
 9: Properly integrates the interface
 9.desc.1: Didn't integrate interface

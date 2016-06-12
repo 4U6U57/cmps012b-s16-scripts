@@ -39,6 +39,7 @@ writetable() {
    for KEY in ${!STUDENTTABLE[@]}; do
       echo $KEY: ${STUDENTTABLE["$KEY"]} >> $1
    done
+   cat $1 | sort >$1
 }
 cleartable() {
    for KEY in ${!STUDENTTABLE[@]}; do
@@ -118,7 +119,7 @@ grade() {
    done
 
    # Comment Block (#4)
-   SCORE=1
+   SCORE=P
    MSG="Comment block checks: \n"
    for FILE in ${!FILES[@]}; do
       if [[ ! -e $FILE ]]; then
@@ -134,7 +135,7 @@ grade() {
          else
             FIRST=$(head -c 1 $FILE)
             MSG+=" MISSING $FILE comment block (${FIRST//\n/\\n})\n"
-            SCORE=0
+            SCORE=C
          fi
       fi
    done
@@ -221,6 +222,7 @@ grade() {
    else
       bash -c "make $EXE" > /dev/null 2>&1
       if [[ -e $EXE ]]; then
+         chmod +x $EXE
          MSG+=" COMPILED $EXE successfully\n"
          $EXE > out
       else
@@ -233,6 +235,7 @@ grade() {
          done
 
          if [[ -e $EXE ]]; then
+            chmod +x $EXE
             MSG+=" COMPILED $EXE successfully\n"
             $EXE > out
          else
@@ -264,9 +267,9 @@ grade() {
       done
    fi
    if [[ $SCORE -lt 0 ]]; then
-      SCORE=S
-   elif [[ $SCORE -eq 2 ]]; then
       SCORE=C
+   elif [[ $SCORE -eq 2 ]]; then
+      SCORE=P
    fi
    STUDENTTABLE[grade.3]=$SCORE
    STUDENTTABLE[notes.3]="$MSG"
@@ -285,7 +288,6 @@ grade() {
       DIFF=$(diff -iwb out $ASGBIN/model-out | grep -Pv "^<|^>|^-" | tr '\n' ' ' | head -c -1)
       MSG+=" FAILED diff test (diff: $DIFF)\n"
    fi
-   echo -e $MSG
    STUDENTTABLE[grade.2]=$SCORE
    STUDENTTABLE[notes.2]="$MSG"
 
@@ -299,8 +301,8 @@ main() {
    readtable $ASGTABLE/student_$STUDENT.autotable
    grade
    restore $BACKUP
-   writetable $ASGTABLE/temp_$STUDENT.autotable
-   #writetable $ASGTABLE/student_$STUDENT.autotable
+   writetable $ASGTABLE/temp_$STUDENT.autotable # Comment this one out
+   #writetable $ASGTABLE/student_$STUDENT.autotable # Uncomment to deploy
    cleartable
 }
 forall main

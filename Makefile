@@ -22,7 +22,7 @@ flab% : lab%
 	${BINPATH}/$</forall
 
 clab% : lab%
-	cat ${BINPATH}/$</student/student_* | grep "notes"
+	cat ${BINPATH}/$</student/student_* | grep -w "notes"
 
 ctlab% : lab%
 	cat ${BINPATH}/$</student/temp_* | grep "notes"
