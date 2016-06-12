@@ -150,7 +150,6 @@ grade() {
          fi
       fi
    done
-   echo -e $MSG
    STUDENTTABLE[grade.4]=$SCORE
    STUDENTTABLE[notes.4]="$MSG"
 
@@ -216,12 +215,14 @@ grade() {
    MSG="Makefile checks: \n"
    EXE="ListClient"
    ALTS=( List ListTest )
+   touch out
    if [[ ! -e List.java ]]; then
       MSG+=" MISSING source code, cannot check make\n"
    else
       bash -c "make $EXE" > /dev/null 2>&1
       if [[ -e $EXE ]]; then
          MSG+=" COMPILED $EXE successfully\n"
+         $EXE > out
       else
          bash -c "make" > /dev/null 2>&1
 
@@ -233,6 +234,7 @@ grade() {
 
          if [[ -e $EXE ]]; then
             MSG+=" COMPILED $EXE successfully\n"
+            $EXE > out
          else
             SCORE=$(($SCORE - 1))
             MSG+=" MISSING $EXE, was not compiled by Makefile (ls: $(ls -m))\n"
@@ -266,115 +268,30 @@ grade() {
    elif [[ $SCORE -eq 2 ]]; then
       SCORE=C
    fi
-   echo -e "$MSG"
    STUDENTTABLE[grade.3]=$SCORE
    STUDENTTABLE[notes.3]="$MSG"
 
    # Performance (#2)
    SCORE=5
-   MSG=""
+   MSG="Performance checks: \n"
+   SCORE=$(($SCORE - ($(diff -iwB out $ASGBIN/model-out | grep "^>" | wc -l) / 4)))
+   if [[ $SCORE -le 1 ]]; then
+      SCORE=C
+   fi
+   if [[ $SCORE == 5 ]]; then
+      SCORE=P
+      MSG+=" PASSED diff test with model-out\n"
+   else
+      DIFF=$(diff -iwb out $ASGBIN/model-out | grep -Pv "^<|^>|^-" | tr '\n' ' ' | head -c -1)
+      MSG+=" FAILED diff test (diff: $DIFF)\n"
+   fi
+   echo -e $MSG
+   STUDENTTABLE[grade.2]=$SCORE
+   STUDENTTABLE[notes.2]="$MSG"
 
+   rm -f $EXE *.class out
 }
 
-fakegrade() {
-   # Makefile (#3)
-   MAKESCORE=2
-   MAKEMSG=""
-   if echo $EXE | grep -qP "\?"; then
-      MAKEMSG="No source code to check make"
-   else
-      bash -c "make" > /dev/null 2>&1
-      if [[ ! -e $EXE ]]; then
-         for ALT in $ALTEXE; do
-            if [[ -e $ALT ]]; then
-               EXE=$ALT
-            fi
-         done
-      fi
-      if [[ -e $EXE ]]; then
-         MAKEMSG+="Makefile compiled executable"
-      else
-         MAKESCORE=$(($MAKESCORE - 1))
-         MAKEMSG+="Makefile did not compile executable"
-         echo "PLACEHOLDER EXECUTABLE" > $EXE
-      fi
-      bash -c "make clean" > /dev/null 2>&1
-      if [[ ! -e $EXE ]]; then
-         MAKEMSG+=", cleaned properly"
-      else
-         MAKESCORE=$(($MAKESCORE - 1))
-         MAKEMSG+=", did not clean"
-         rm -f $EXE
-      fi
-      for FILE in $BACKUP/*; do
-         FILE=$(basename $FILE)
-         if [[ ! -e $FILE ]]; then
-            cp $BACKUP/$FILE $FILE
-            MAKESCORE=$(($MAKESCORE - 1))
-            MAKEMSG+=", deleted $FILE"
-         elif ! diff -q $FILE $BACKUP/$FILE; then
-            cp $BACKUP/$FILE $FILE
-            MAKESCORE=$(($MAKESCORE - 1))
-            MAKEMSG+=", edited source file $FILE"
-         fi
-      done
-      if [[ $MAKESCORE -lt 0 ]]; then
-         MAKESCORE=0
-      fi
-   fi
-   STUDENTTABLE[grade.3]=$MAKESCORE
-   STUDENTTABLE[notes.3]="$MAKEMSG"
-
-   # Valgrind (#8)
-   if echo $EXE | grep -qP "\?"; then
-      STUDENTTABLE[grade.8]=0
-      STUDENTTABLE[notes.8]="No source code to check leaks (ls: $(ls -m))"
-   else
-      bash -c "make" > /dev/null 2>&1
-      if [[ ! -e $EXE ]]; then
-         for ALT in $ALTEXE; do
-            if [[ -e $ALT ]]; then
-               EXE=$ALT
-            fi
-         done
-      fi
-      if [[ -e $EXE ]]; then
-         LEAKS=$(valgrind --log-fd=1 $EXE charType.c | grep -P "in use at exit")
-         if [[ $(echo $LEAKS | cut -d ":" -f 2 | cut -d " " -f 2) == 0 ]]; then
-            STUDENTTABLE[grade.8]=P
-            STUDENTTABLE[notes.8]="Program ran without leaks"
-         else
-            STUDENTTABLE[grade.8]=C
-            STUDENTTABLE[notes.8]="Program ran with leaks (valgrind: $LEAKS)"
-         fi
-      else
-         STUDENTTABLE[grade.8]=P
-         STUDENTTABLE[notes.8]="No executable to check leaks (ls: $(ls -m))"
-      fi
-   fi
-
-   # Performance (#2)
-   if [[ ! -e $EXE ]]; then
-      STUDENTTABLE[grade.2]=C
-      STUDENTTABLE[notes.2]="No executable to check diff (ls: $(ls -m))"
-   else
-      ./$EXE $ASGBIN/in out > /dev/null 1>&2
-      DIFF=$((5 - ($(diff -iwB out $ASGBIN/out | grep "^>" | wc -l) / 4)))
-      if [[ $DIFF -le 1 ]]; then
-         DIFF=C
-      fi
-      if [[ $DIFF == 5 ]]; then
-         STUDENTTABLE[grade.2]=P
-         STUDENTTABLE[notes.2]="Program passed diff test"
-      else
-         STUDENTTABLE[grade.2]=$DIFF
-         DIFF=$(diff -iwb out $ASGBIN/out | grep -Pv "^<|^>|^-" | tr '\n' ' ' | head -c -1)
-         STUDENTTABLE[notes.2]="Program failed diff (diff: $DIFF)"
-      fi
-   fi
-
-   rm -f $EXE *.o out
-}
 main() {
    BACKUP=".backup"
    pwd
