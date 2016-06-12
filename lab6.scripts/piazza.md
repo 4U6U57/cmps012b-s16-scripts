@@ -41,7 +41,7 @@ we are only strict on those who are actively pursuing grade review.
 ## Compiler Warnings (2 points)
 * 2 points: No Warnings
 * 1 point: 1 <= warnings <= 5
-* 0 points: warnings < 5
+* 0 points: 5 < warnings
 
 ## Interface Integration (2 points)
 * Whether or not your program actually worked with the implemented interface
