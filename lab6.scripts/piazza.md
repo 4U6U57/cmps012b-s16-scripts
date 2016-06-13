@@ -2,6 +2,8 @@
 
 Grades are due on Tuesday, June 14th and should be officially visible through the myucsc portal sometime throughout the day.
 
+Have a nice summer everyone and I hope everyone had a great year!
+
 [Isaak Cherdak](icherdak@ucsc.edu)
 [August Valera](avalera@ucsc.edu)
 
@@ -45,7 +47,5 @@ Grades are due on Tuesday, June 14th and should be officially visible through th
 Average was a 17/20.
 
 Important notes:
-
-(August please add)
 
 (Isaak Please add)
