@@ -301,8 +301,8 @@ main() {
    readtable $ASGTABLE/student_$STUDENT.autotable
    grade
    restore $BACKUP
-   writetable $ASGTABLE/temp_$STUDENT.autotable # Comment this one out
-   #writetable $ASGTABLE/student_$STUDENT.autotable # Uncomment to deploy
+   #writetable $ASGTABLE/temp_$STUDENT.autotable # Comment this one out
+   writetable $ASGTABLE/student_$STUDENT.autotable # Uncomment to deploy
    cleartable
 }
 forall main
