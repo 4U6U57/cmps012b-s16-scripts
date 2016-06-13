@@ -93,7 +93,7 @@ checkfilename() {
 declare -A FILES
 declare -A NUMBERS
 FILES=( [List.java]=*ist.* [Makefile]=*ake* [ListTest.java]=*est* )
-NUMBERS=( [List.java]=4 [Makefile]=5 [ListTest.java]=6 )
+NUMBERS=( [List.java]=5 [Makefile]=6 [ListTest.java]=7 )
 ALTEXE=""
 grade() {
    # Actual grading code here
