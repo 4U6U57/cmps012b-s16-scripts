@@ -39,7 +39,8 @@ writetable() {
    for KEY in ${!STUDENTTABLE[@]}; do
       echo $KEY: ${STUDENTTABLE["$KEY"]} >> $1
    done
-   cat $1 | sort >$1
+   cat $1 | sort > $1.swp
+   mv $1.swp $1
 }
 cleartable() {
    for KEY in ${!STUDENTTABLE[@]}; do
@@ -301,7 +302,7 @@ main() {
    readtable $ASGTABLE/student_$STUDENT.autotable
    grade
    restore $BACKUP
-   #writetable $ASGTABLE/temp_$STUDENT.autotable # Comment this one out
+   # writetable $ASGTABLE/temp_$STUDENT.autotable # Comment this one out
    writetable $ASGTABLE/student_$STUDENT.autotable # Uncomment to deploy
    cleartable
 }
