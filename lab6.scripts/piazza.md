@@ -1,13 +1,12 @@
 # INFO
-So, it's been a really long delay with getting these grades out. We're really
-sorry.
 
 [Isaak Cherdak](icherdak@ucsc.edu)
 [August Valera](avalera@ucsc.edu)
 
 If you feel we have graded your assignment incorrectly, please send us an email
-with the word REVIEW in all caps (formerly REGRADE, but there was confusion over
-the term). Please be very confident in our error before doing so, because we
+with the word REVIEW in all caps as well as a description of what you think we did wrong
+(formerly REGRADE, but there was confusion over the term).
+Please be very confident in our error before doing so, because we
 will review your entire submission, asking you detailed questions about it, and
 possibly take off more points if we deem necessary (such as finding errors
 missed on the first pass). However, feel free to ask questions without penalty,
@@ -17,6 +16,9 @@ we are only strict on those who are actively pursuing grade review.
 
 ## Design (5 points)
 * Case by Case but mostly focused on modification for use with generics
+* The most important function is the equals() function as it was the only one
+  that required modification of code rather than just changing data types
+* Most common error was using == instead of equals() when comparing two generic objects
 
 ## Performance (5 points)
 * 5 points: Passed diff test for expected output, as given in examples/ folder
@@ -41,10 +43,16 @@ we are only strict on those who are actively pursuing grade review.
 ## Compiler Warnings (2 points)
 * 2 points: No Warnings
 * 1 point: 1 <= warnings <= 5
-* 0 points: 5 < warnings
+* 0 points: 5 < warnings || doesn't compile
 
 ## Interface Integration (2 points)
 * Whether or not your program actually worked with the implemented interface
 
 # NOTES
-Average was a (Isaak fill this in), we saw some scary stuff, etc
+Average was a 17/20.
+
+Important notes:
+
+(August please add)
+
+(Isaak Please add)
