@@ -4,3 +4,7 @@ echo "==========="
 cat Makefile
 echo "==========="
 echo ""
+echo "RUNNING 'make' then 'make clean'"
+make
+make clean
+echo ""
