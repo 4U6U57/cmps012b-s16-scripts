@@ -3,15 +3,6 @@
 [Isaak Cherdak](icherdak@ucsc.edu)
 [August Valera](avalera@ucsc.edu)
 
-If you feel we have graded your assignment incorrectly, please send us an email
-with the word REVIEW in all caps as well as a description of what you think we did wrong
-(formerly REGRADE, but there was confusion over the term).
-Please be very confident in our error before doing so, because we
-will review your entire submission, asking you detailed questions about it, and
-possibly take off more points if we deem necessary (such as finding errors
-missed on the first pass). However, feel free to ask questions without penalty,
-we are only strict on those who are actively pursuing grade review.
-
 # GRADE BREAKDOWN
 
 ## Design (5 points)
