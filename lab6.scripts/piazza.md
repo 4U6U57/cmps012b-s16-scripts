@@ -1,5 +1,7 @@
 # INFO
 
+Grades are due on Tuesday, June 14th and should be officially visible through the myucsc portal sometime throughout the day.
+
 [Isaak Cherdak](icherdak@ucsc.edu)
 [August Valera](avalera@ucsc.edu)
 
