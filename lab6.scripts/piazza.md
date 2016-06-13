@@ -1,6 +1,6 @@
 # INFO
 
-Grades are due on Tuesday, June 14th and should be officially visible through the myucsc portal sometime throughout the day.
+Class grades are due on Tuesday, June 14th and should be officially visible through the myucsc portal sometime throughout the day.
 
 Have a nice summer everyone and I hope everyone had a great year!
 
@@ -46,6 +46,7 @@ Have a nice summer everyone and I hope everyone had a great year!
 # NOTES
 Average was a 17/20.
 
-Important notes:
-
-(Isaak Please add)
+Don't forget that since we are working with generics, you must compare variables
+as if they are reference variables. In other words, you should use the equals() function
+so that the inner class can handle the comparison. Observe that the comparison between two
+reference variables using == would almost always be false because it would compare their addresses.
