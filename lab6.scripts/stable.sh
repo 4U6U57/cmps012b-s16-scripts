@@ -242,7 +242,15 @@ grade() {
          else
             SCORE=$(($SCORE - 1))
             MSG+=" MISSING $EXE, was not compiled by Makefile (ls: $(ls -m))\n"
-            echo "PLACEHOLDER EXECUTABLE" > $EXE
+
+            cp $ASGBIN/Makefile makefile
+            bash -c "make $EXE" > /dev/null 2>&1
+
+            if [[ -e $EXE ]]; then
+               $EXE > out
+            else
+               echo "PLACEHOLDER EXECUTABLE" > $EXE
+            fi
          fi
       fi
       bash -c "make clean" > /dev/null 2>&1
